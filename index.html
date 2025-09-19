@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>David Mwangi </title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'], }, }, }, };
+    </script>
+    <style>
+        body { 
+    -webkit-tap-highlight-color: transparent; 
+}
+.modal, #overlay { 
+    transition: opacity 0.4s ease; 
+}
+.modal-content { 
+    transition: transform 0.4s ease, opacity 0.4s ease; 
+}
+#overlay.fade-out { 
+    opacity: 0 !important; 
+    pointer-events: none; 
+}
+.fade-in { 
+    opacity: 0; 
+    animation: fadeIn 2s ease 1s forwards; 
+}
+@keyframes fadeIn { 
+    to { opacity: 1; } 
+}
+
+
+#terminal-container {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#tooltip {
+    animation: blink-pulse 2.5s infinite ease-in-out;
+    transform-origin: right center; 
+}
+
+@keyframes blink-pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(0.98);
+    }
+}
+    </style>
+</head>
+<body class="bg-gray-50 flex flex-col items-center justify-center h-screen overflow-hidden antialiased text-slate-800">
+
+    <div id="overlay" class="fade-in absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none z-20"><h1 class="font-serif text-5xl md:text-8xl font-bold text-slate-900 tracking-tight italic">I'm David,</h1><h2 class="font-serif text-5xl md:text-8xl font-bold text-slate-900 tracking-tight">an Internet Generalist</h2></div>
+    <canvas id="render-canvas" class="cursor-grab active:cursor-grabbing"></canvas>
+    <div id="modal-container" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"><div id="modal-content-box" class="modal-content opacity-0 scale-95 bg-white rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-8 md:p-12"><div class="flex justify-between items-start mb-6"><h2 id="modal-title" class="font-serif text-4xl font-bold text-slate-900"></h2><button id="close-modal-btn" class="text-slate-400 hover:text-slate-900 text-3xl leading-none transition-colors">&times;</button></div><div id="modal-body" class="text-slate-600"></div></div></div>
+<!-- Terminal HTML -->
+    <div id="terminal-container" class="hidden fixed w-[95%] max-w-lg h-80 bg-slate-900 bg-opacity-90 backdrop-blur-sm rounded-lg shadow-2xl z-40 font-mono text-sm text-green-400 flex flex-col">
+        <div id="terminal-header" class="flex-shrink-0 bg-slate-800 p-2 rounded-t-lg flex items-center justify-between cursor-move">
+            <div class="flex items-center space-x-2">
+                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+            </div>
+            <p class="text-slate-400 select-none">dave@recitifier00x ~</p>
+            <button id="close-terminal-btn" class="text-slate-400 hover:text-white cursor-pointer">&times;</button>
+        </div>
+        <div id="terminal-body" class="p-4 overflow-y-auto flex-grow"></div>
+        <div class="p-2 border-t border-slate-700 flex items-center">
+            <span class="text-cyan-400 mr-2 select-none">$</span>
+            <input type="text" id="terminal-input" class="bg-transparent border-none text-green-400 w-full focus:outline-none" autocomplete="off">
+        </div>
+    </div>
+
+    
+    <div class="fade-in fixed bottom-4 right-4 flex items-center z-30">
+        <div id="tooltip" class="bg-indigo-600 text-white text-xs font-bold py-1 px-3 rounded-md mr-3 whitespace-nowrap">
+            Try the Terminal! (Ctrl+K)
+        </div>
+        <button id="terminal-toggle" class="bg-slate-800 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-slate-900 transition-colors" title="Open Terminal (Ctrl + K)">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4" /></svg>
+        </button>
+    </div>
+
+ 
+ 
+    <div id="content-templates" class="hidden">
+        <div id="about-me"><div class="grid md:grid-cols-2 gap-12 items-center"><div><p class="text-sm text-slate-500 uppercase tracking-widest">Introduction</p><h3 class="font-serif text-3xl font-bold text-slate-900 mt-2 mb-4">Meet David</h3><p>I’m an internet generalist. That's how i like to describe myself,to mean i'm into anything that is tech</p></div><div class="grid grid-cols-2 gap-8 text-center md:text-left"><div><p class="font-serif text-5xl font-bold text-slate-900">3<span class="text-sky-500">+</span></p><p class="text-sm text-slate-500 mt-1">Years in the tech industry</p></div><div><p class="font-serif text-5xl font-bold text-slate-900">CTF<span class="text-sky-500">s</span></p><p class="text-sm text-slate-500 mt-1">Current passion for security challenges</p></div><div><p class="font-serif text-5xl font-bold text-slate-900">100<span class="text-sky-500">%</span></p><p class="text-sm text-slate-500 mt-1">Love for learning via tech blogs</p></div><div><p class="font-serif text-5xl font-bold text-slate-900">python</p><p class="text-sm text-slate-500 mt-1">Primary language of choice </p></div></div></div></div>
+        <div id="projects"><h3 class="font-serif text-3xl font-bold text-slate-900 mt-2 mb-4">Coming Soon</h3><p>I'm currently preparing detailed case studies of my work. Please check back later!</p></div>
+        <div id="skills"><h3 class="text-sm text-slate-500 uppercase tracking-widest mb-4">Tech Interests</h3><ul class="space-y-3 text-lg"><li class="flex items-center"><strong class="w-32 text-slate-900">Languages:</strong> Python, Go, PHP</li><li class="flex items-center"><strong class="w-32 text-slate-900">Tools:</strong> Docker, Jenkins, Git, Linux, bash</li><li class="flex items-center"><strong class="w-32 text-slate-900">Framework:</strong> Laravel</li></ul></div>
+        <div id="contact">
+            <div class="grid md:grid-cols-2 gap-12">
+                <div>
+                    <p class="text-sm text-slate-500 uppercase tracking-widest">My socials</p>
+                    <h3 class="font-serif text-3xl font-bold text-slate-900 mt-2 mb-4">Get In Touch</h3>
+                    <p>I'm always open to discussing  creative ideas, or opportunities to be part of an ambitious vision. Feel free to reach out.</p>
+                </div>
+                <div class="space-y-4">
+                    <a href="mailto:davidgathonson@gmail.com" class="block p-4 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all">
+                        <strong class="text-slate-900">Email</strong>
+                        <p class="text-sky-600">davidgathonson@gmail.com</p>
+                    </a>
+                             <a href="https://x.com/rectifier00x" class="block p-4 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all">
+                        <strong class="text-slate-900">X</strong>
+                        <p class="text-sky-600">@recitifier</p>
+                    </a>
+                    <a href="https://github.com/dave-019" target="_blank" class="block p-4 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all">
+                        <strong class="text-slate-900">GitHub</strong>
+                        <p class="text-slate-500">@dave-019</p>
+                    </a>
+                    <a href="https://www.linkedin.com/in/mwangi-david-6b279a2b4/" target="_blank" class="block p-4 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all">
+                        <strong class="text-slate-900">LinkedIn</strong>
+                        <p class="text-slate-500">@mwangi-david/p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+                <!--adding blogs-->
+        <div id="blog">
+            <a href="blogs/first-blog.html" class="block mb-8 pb-6 border-b border-slate-200 hover:text-sky-600 transition-colors">
+                <h4 class="font-serif text-2xl font-bold text-slate-900 mb-1">My First BLOG: hidden gems</h4>
+                <p class="text-sm text-slate-500 mb-3">September 19, 2025</p>
+                <p>A blog about the hidden gems I’ve come across online.</p>
+            </a>
+            <a href="blogs/why-i-love-python.html" class="mb-8 pb-6 border-b border-slate-200 hover:text-sky-600 transition-colors">
+                <h4 class="font-serif text-2xl font-bold text-slate-900 mb-1">Why python i love python</h4>
+                <p class="text-sm text-slate-500 mb-3">September 19, 2025</p>
+                <p>My thoughts on why Python feels simple, powerful, and fun to use</p>
+            </a>
+            
+        </div>
+    </div>
+
+    <div class="fade-in fixed top-4 right-4 text-slate-500 text-sm z-30 pointer-events-none">Click purple nodes to explore, drag to spin.</div>
+    <div class="fade-in fixed top-10 right-4 text-slate-500 text-sm z-30 pointer-events-none">you can also use terminal to interact with site.</div>
+
+    <script>
+        const canvas = document.getElementById('render-canvas');
+        const ctx = canvas.getContext('2d');
+        const WIDTH = window.innerWidth, HEIGHT = window.innerHeight;
+        canvas.width = WIDTH; canvas.height = HEIGHT;
+        const FOCAL_LENGTH = WIDTH/2, POINT_SIZE = Math.min(WIDTH,HEIGHT)/4.5;
+        const t = (1.0 + Math.sqrt(5.0)) / 2.0;
+        const nodesData=[{p:{x:-1,y:t,z:0},t:'About Me',c:'about-me'},{p:{x:1,y:t,z:0},t:'Projects',c:'projects'},{p:{x:-1,y:-t,z:0},t:'Skills',c:'skills'},{p:{x:1,y:-t,z:0},t:'Contact',c:'contact'},{p:{x:0,y:-1,z:t},t:'Blog',c:'blog'},{p:{x:0,y:1,z:t}},{p:{x:0,y:-1,z:-t}},{p:{x:0,y:1,z:-t}},{p:{x:t,y:0,z:-1}},{p:{x:t,y:0,z:1}},{p:{x:-t,y:0,z:-1}},{p:{x:-t,y:0,z:1}}];
+        const edges=[[0,11],[0,5],[0,1],[0,7],[0,10],[1,5],[1,9],[1,7],[2,3],[2,4],[2,6],[2,11],[2,10],[3,4],[3,9],[3,8],[3,6],[4,11],[4,5],[4,9],[6,10],[6,8],[7,10],[7,8],[8,9],[10,11],[1,8],[0,1],[5,11]];
+        const nodes = nodesData.map(n => ({...n, anchorPos:{x:n.p.x*POINT_SIZE,y:n.p.y*POINT_SIZE,z:n.p.z*POINT_SIZE},pos:{x:n.p.x*POINT_SIZE,y:n.p.y*POINT_SIZE,z:n.p.z*POINT_SIZE},vel:{x:0,y:0,z:0}}));
+        const SPRING_STRENGTH = 0.0015, DAMPING = 0.94;
+        let time=0, angleX=Math.PI/2, targetAngleX=0.2, angleY=0, targetAngleY=0, hoveredIdx=-1, activeIdx=-1, mouseX=0, mouseY=0, isDragging=false, draggedSinceClick = false, lastMouseX=0, lastMouseY=0;
+        function rotate(p,a,axis){const c=Math.cos(a),s=Math.sin(a);if(axis==='x')return{x:p.x,y:p.y*c-p.z*s,z:p.y*s+p.z*c};if(axis==='y')return{x:p.x*c+p.z*s,y:p.y,z:-p.x*s+p.z*c};}
+        function project(p){const s=FOCAL_LENGTH/(FOCAL_LENGTH+p.z);return{x:p.x*s+WIDTH/2,y:p.y*s+HEIGHT/2,s};}
+        function lerp(a,b,t){return a+(b-a)*t;}
+        function animate() {
+            time+=0.01; 
+            if (!isDragging && !modalCont.classList.contains('hidden')) {
+                targetAngleY += 0.0005;
+            }
+
+            ctx.clearRect(0,0,WIDTH,HEIGHT);
+            angleX=lerp(angleX,targetAngleX,0.05); angleY=lerp(angleY,targetAngleY,0.05);
+            const breath=1.0+Math.sin(time*0.8)*0.02;
+            const procNodes=nodes.map(n=>{const dx=n.anchorPos.x-n.pos.x,dy=n.anchorPos.y-n.pos.y,dz=n.anchorPos.z-n.pos.z;n.vel.x+=dx*SPRING_STRENGTH;n.vel.y+=dy*SPRING_STRENGTH;n.vel.z+=dz*SPRING_STRENGTH;n.vel.x*=DAMPING;n.vel.y*=DAMPING;n.vel.z*=DAMPING;n.pos.x+=n.vel.x;n.pos.y+=n.vel.y;n.pos.z+=n.vel.z;const breathedPos={x:n.pos.x*breath,y:n.pos.y*breath,z:n.pos.z*breath};const r=rotate(rotate(breathedPos,angleX,'x'),angleY,'y');return{...n,rPos:r,pPos:project(r)};});
+            
+            ctx.strokeStyle='rgba(0, 0, 0, 0.15)'; ctx.lineWidth = 1.5; ctx.shadowBlur = 0;
+            edges.forEach(e=>{const p1=procNodes[e[0]].pPos,p2=procNodes[e[1]].pPos;ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.stroke();});
+            
+            procNodes.forEach((n,i)=>{
+                const p=n.pPos;
+                let baseRadius=8*p.s;
+                if(n.t) baseRadius += Math.sin(time * 2 + i) * 2.5 * p.s;
+
+                const radius=Math.max(1,baseRadius);
+                ctx.beginPath();
+                ctx.arc(p.x,p.y,radius,0,Math.PI*2);
+                ctx.shadowColor='rgba(0,0,0,0.2)';
+                ctx.shadowBlur=5;
+
+                if(i===activeIdx) ctx.fillStyle='#0ea5e9';
+                else if(i===hoveredIdx && n.t) ctx.fillStyle='#4f46e5';
+                else if(n.t) ctx.fillStyle='#8b5cf6';
+                else ctx.fillStyle='#9CA3AF';
+                
+                ctx.fill();
+                
+                if(n.t&&n.rPos.z>-50){
+                    const fontSize=Math.max(12,16*p.s);
+                    ctx.font=`700 ${fontSize}px 'Inter',sans-serif`;
+                    ctx.fillStyle=`rgba(17,24,39,0.8)`;
+                    ctx.textAlign='center';
+                    ctx.shadowBlur=0;
+                    ctx.fillText(n.t,p.x,p.y+radius+fontSize+5);
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+        const modalCont=document.getElementById('modal-container'),overlay=document.getElementById('overlay'),modalTitle=document.getElementById('modal-title'),modalBody=document.getElementById('modal-body'),closeBtn=document.getElementById('close-modal-btn'),modalContentBox=document.getElementById('modal-content-box');
+        function openModal(n){const c=document.getElementById(n.c);if(!c)return;modalTitle.innerText=n.t;modalBody.innerHTML=c.innerHTML;modalCont.classList.remove('hidden');overlay.classList.add('fade-out');setTimeout(()=>{modalContentBox.classList.remove('opacity-0','scale-95');},10);}
+        function closeModal(){overlay.classList.remove('fade-out');modalContentBox.classList.add('opacity-0','scale-95');setTimeout(()=>{activeIdx=-1;modalCont.classList.add('hidden');},400);}
+        closeBtn.addEventListener('click',closeModal);modalCont.addEventListener('click',e=>{if(e.target===modalCont)closeModal();});
+        
+        function getEventCoords(e){if(e.changedTouches&&e.changedTouches.length)return{x:e.changedTouches[0].clientX,y:e.changedTouches[0].clientY};if(e.touches&&e.touches.length)return{x:e.touches[0].clientX,y:e.touches[0].clientY};return{x:e.clientX,y:e.clientY};}
+        function onPointerDown(e){isDragging=true;draggedSinceClick=false;const coords=getEventCoords(e);lastMouseX=coords.x;lastMouseY=coords.y;}
+        function onPointerMove(e){
+            const coords=getEventCoords(e);
+            if(isDragging){
+                draggedSinceClick=true;
+                const deltaX=coords.x-lastMouseX;
+                const deltaY=coords.y-lastMouseY;
+                targetAngleY += deltaX * 0.005;
+                targetAngleX += deltaY * 0.005;
+            }
+            lastMouseX=coords.x;
+            lastMouseY=coords.y;
+        }
+        function onPointerUp(){isDragging=false;}
+        function onTap(e){if(draggedSinceClick)return;const coords=getEventCoords(e);const rect=canvas.getBoundingClientRect();const clickX=coords.x-rect.left,clickY=coords.y-rect.top;let clickedIdx=-1;const pps=nodes.map(n=>project(rotate(rotate(n.pos,angleX,'x'),angleY,'y')));for(let i=pps.length-1;i>=0;i--){const p=pps[i],r=15*p.s;if(Math.sqrt((clickX-p.x)**2+(clickY-p.y)**2)<r&&nodes[i].t){clickedIdx=i;break;}}if(clickedIdx!==-1){activeIdx=clickedIdx;openModal(nodes[clickedIdx]);}}
+        
+        canvas.addEventListener('mousedown',onPointerDown);canvas.addEventListener('mousemove',onPointerMove);canvas.addEventListener('mouseup',onPointerUp);canvas.addEventListener('mouseleave',onPointerUp);canvas.addEventListener('click',onTap);
+        canvas.addEventListener('touchstart',e=>{e.preventDefault();onPointerDown(e);},{passive:false});canvas.addEventListener('touchmove',e=>{e.preventDefault();onPointerMove(e);},{passive:false});canvas.addEventListener('touchend',e=>{e.preventDefault();onPointerUp(e);onTap(e);},{passive:false});canvas.addEventListener('touchcancel',onPointerUp);
+        window.addEventListener('resize',()=>{location.reload();});
+        
+        animate();
+    </script>
+    <script src="terminal.js"></script>
+</body>
+</html>
