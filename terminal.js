@@ -8,14 +8,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const tooltip = document.getElementById('tooltip');
 
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    
+    let initialViewportHeight = window.innerHeight;
+
     if (isTouchDevice) {
         tooltip.textContent = 'Tap to Open Terminal!';
     } else {
         tooltip.innerHTML = 'Try the Terminal! (Ctrl+K)';
     }
   
+    const adjustTerminalForKeyboard = () => {
+        if (!isTouchDevice) return;
 
+        const currentHeight = window.innerHeight;
+        if (currentHeight < initialViewportHeight * 0.75) {
+            terminalContainer.style.top = '1rem'; 
+            terminalContainer.style.height = `calc(100% - 2rem)`; 
+            terminalContainer.style.transform = 'translateX(-50%)'; 
+        } else {
+            terminalContainer.style.top = '50%';
+            terminalContainer.style.height = ''; 
+            terminalContainer.style.transform = 'translate(-50%, -50%)';
+            initialViewportHeight = currentHeight;
+        }
+    };
+
+    window.addEventListener('resize', adjustTerminalForKeyboard);
 
     const commands = {
         'help': 'Available commands: <br> `help` - Show this list <br> `ls` - List available sections <br> `cd` - Open a section ( `cd about`) <br> `socials` - Display social media links <br> `neofetch` - Display system info <br> `clear` - Clear the terminal <br> `exit` - Close the terminal',
@@ -38,6 +55,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const closeTerminal = () => {
         terminalContainer.classList.add('hidden');
+        if (isTouchDevice) {
+            terminalContainer.style.top = '50%';
+            terminalContainer.style.height = ''; 
+            terminalContainer.style.transform = 'translate(-50%, -50%)';
+        }
     };
 
     const printToTerminal = (text, isCommand = false) => {
