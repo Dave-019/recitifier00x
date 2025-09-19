@@ -226,7 +226,7 @@
         
         canvas.addEventListener('mousedown',onPointerDown);canvas.addEventListener('mousemove',onPointerMove);canvas.addEventListener('mouseup',onPointerUp);canvas.addEventListener('mouseleave',onPointerUp);canvas.addEventListener('click',onTap);
         canvas.addEventListener('touchstart',e=>{e.preventDefault();onPointerDown(e);},{passive:false});canvas.addEventListener('touchmove',e=>{e.preventDefault();onPointerMove(e);},{passive:false});canvas.addEventListener('touchend',e=>{e.preventDefault();onPointerUp(e);onTap(e);},{passive:false});canvas.addEventListener('touchcancel',onPointerUp);
-        window.addEventListener('resize', handleResize);
+        window.addEventListener('resize',()=>{location.reload();});
         
         animate();
     </script>
