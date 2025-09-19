@@ -56,6 +56,16 @@
         transform: scale(0.98);
     }
 }
+         #terminal-container {
+            transition: top 0.3s ease-in-out, transform 0.3s ease-in-out, height 0.3s ease-in-out;
+        }
+
+        .terminal-keyboard-active {
+            top: 1rem !important; 
+            transform: translateX(-50%) !important; 
+            height: calc(100% - 2rem); 
+            max-height: 400px; 
+        }
     </style>
 </head>
 <body class="bg-gray-50 flex flex-col items-center justify-center h-screen overflow-hidden antialiased text-slate-800">
