@@ -158,6 +158,18 @@ document.addEventListener('DOMContentLoaded', () => {
             terminalContainer.classList.contains('hidden') ? openTerminal() : closeTerminal();
         }
     });
+     if (isTouchDevice) {
+        terminalInput.addEventListener('focus', () => {
+            
+            terminalContainer.classList.add('terminal-keyboard-active');
+        });
+
+        terminalInput.addEventListener('blur', () => {
+            
+            terminalContainer.classList.remove('terminal-keyboard-active');
+        });
+    }
+    
 
     printToTerminal("Welcome !");
     printToTerminal("Type `help` to get started.");
