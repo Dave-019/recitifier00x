@@ -47,7 +47,17 @@ document.addEventListener('DOMContentLoaded', () => {
 </pre>`,
     };
 
-    const openTerminal = () => {
+const openTerminal = () => {
+        if (isTouchDevice) {
+            terminalContainer.style.top = '1rem'; 
+            terminalContainer.style.left = '50%';
+            terminalContainer.style.transform = 'translateX(-50%)';
+        } else {
+            terminalContainer.style.top = '50%';
+            terminalContainer.style.left = '50%';
+            terminalContainer.style.transform = 'translate(-50%, -50%)';
+        }
+
         terminalContainer.classList.remove('hidden');
         terminalInput.focus();
         tooltip.style.display = 'none'; 
@@ -55,11 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const closeTerminal = () => {
         terminalContainer.classList.add('hidden');
-        if (isTouchDevice) {
-            terminalContainer.style.top = '50%';
-            terminalContainer.style.height = ''; 
-            terminalContainer.style.transform = 'translate(-50%, -50%)';
-        }
+        terminalContainer.style.top = '';
+        terminalContainer.style.left = '';
+        terminalContainer.style.transform = '';
     };
 
     const printToTerminal = (text, isCommand = false) => {
